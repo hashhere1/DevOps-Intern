@@ -3,14 +3,19 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-DATA_BASE_URL =os.getenv("postgresql://hassaan:hassaan12@localhost:5432/inventory_system")
+# Get the database URL from environment variable, or use default
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hassaan:hassaan12@localhost:5432/inventory_system")
 
-engine = create_engine(DATA_BASE_URL)
+# Create SQLAlchemy engine
+engine = create_engine(DATABASE_URL)
 
-SessionLocal = sessionmaker(autoflush=False,autocommit= False, bind= engine)
+# Create a configured "Session" class
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
+# Base class for models
 Base = declarative_base()
 
+# Dependency to get DB session
 def get_db():
     db = SessionLocal()
     try:
