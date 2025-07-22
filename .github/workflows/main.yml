@@ -3,10 +3,10 @@ name: Test
 on:
   push:
     branches:
-      - main
+      - day3
   pull_request:
     branches:
-      - main
+      - day3
 
 jobs:
   test:
