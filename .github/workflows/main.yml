@@ -1,12 +1,15 @@
 name: FastAPI CI
+
 on:
   push:
     branches: [ day3 ]
   pull_request:
     branches: [ day3 ]
+
 jobs:
   test:
     runs-on: ubuntu-latest
+
     services:
       postgres:
         image: postgres:13
@@ -21,77 +24,22 @@ jobs:
           --health-interval=5s
           --health-timeout=10s
           --health-retries=20
-        # Add initialization script
-        script: |
-          echo "PostgreSQL init process complete; ready for start up."
-          exec postgres -D /var/lib/postgresql/data
+
     env:
       DATABASE_URL: postgresql://hassaan:hassaan12@postgres:5432/inventory_system
-      PGPASSWORD: hassaan12
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-      - name: Install PostgreSQL client
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
+
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Wait for PostgreSQL with longer timeout
+
+      - name: Run tests
         run: |
-          echo "Waiting for PostgreSQL to be ready..."
-          for i in {1..60}; do
-            if pg_isready -h postgres -U hassaan -d inventory_system; then
-              echo "PostgreSQL is ready!"
-              break
-            fi
-            echo "[$i/60] PostgreSQL not ready yet..."
-            sleep 5
-          done
-          # Final check
-          if ! pg_isready -h postgres -U hassaan -d inventory_system; then
-            echo "PostgreSQL failed to start after 5 minutes"
-            exit 1
-          fi
-      - name: Initialize Database
-        run: |
-          python -c "
-          import time
-          import psycopg2
-          from psycopg2 import OperationalError
-          
-          # Wait a bit more for database to be fully ready
-          time.sleep(10)
-          
-          # Test connection
-          attempts = 0
-          max_attempts = 10
-          while attempts < max_attempts:
-              try:
-                  conn = psycopg2.connect(
-                      dbname='inventory_system',
-                      user='hassaan',
-                      password='hassaan12',
-                      host='postgres',
-                      port=5432
-                  )
-                  print('Database connection successful!')
-                  conn.close()
-                  break
-              except OperationalError as e:
-                  attempts += 1
-                  print(f'Connection attempt {attempts}/{max_attempts} failed: {e}')
-                  time.sleep(5)
-          else:
-              print('Failed to connect to database after multiple attempts')
-              exit(1)
-          "
-      - name: Run Tests
-        run: pytest -v --log-cli-level=DEBUG
-        env:
-          DATABASE_URL: ${{ env.DATABASE_URL }}
+          pytest -v
