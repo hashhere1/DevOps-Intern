@@ -9,5 +9,6 @@ pytest
 httpx
 alembic
 pytest-asyncio
+python-dotenv
 passlib[bcrypt]
 python-multipart

@@ -3,10 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Get the database URL from environment variable
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hassaan:hassaan12@localhost:5432/inventory_system")
 
-# Create SQLAlchemy engine with proper connection parameters
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hassaan:hassaan12@postgres:5432/inventory_system")
+
 engine = create_engine(
     DATABASE_URL,
     pool_size=5,
@@ -15,7 +14,6 @@ engine = create_engine(
     pool_recycle=1800
 )
 
-# Create a configured "Session" class
 SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False,
@@ -23,10 +21,8 @@ SessionLocal = sessionmaker(
     expire_on_commit=False
 )
 
-# Base class for models
 Base = declarative_base()
 
-# Dependency to get DB session
 def get_db():
     db = SessionLocal()
     try:
