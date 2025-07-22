@@ -24,9 +24,14 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
+        logging:
+          options:
+            max-size: 10m
+            max-file: "3"
 
     env:
       DATABASE_URL: postgresql://hassaan:hassaan12@postgres:5432/inventory_system
+      PGPASSWORD: hassaan12
 
     steps:
       - uses: actions/checkout@v3
@@ -58,4 +63,6 @@ jobs:
           PGPASSWORD: hassaan12
 
       - name: Run Tests
-        run: pytest -v
+        run: pytest -v --log-cli-level=DEBUG
+        env:
+          DATABASE_URL: postgresql://hassaan:hassaan12@postgres:5432/inventory_system
