@@ -120,3 +120,4 @@
 2025-07-22 15:41:47,357 - IP: testclient | Method: DELETE | Path: /category/delete/41
 2025-07-22 15:56:23,468 - IP: testclient | Method: GET | Path: /inventory/
 2025-07-22 15:56:38,387 - IP: testclient | Method: POST | Path: /inventory/create
+2025-07-22 16:21:11,013 - IP: testclient | Method: POST | Path: /login/
