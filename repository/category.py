@@ -42,4 +42,4 @@ def delete(category_id, db: Session):
         )
     db.delete(delete_category)
     db.commit()
-    return f"Category with id '{category_id}' deleted"
+    return delete_category
