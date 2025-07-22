@@ -44,12 +44,19 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Wait for PostgreSQL
+      - name: Wait for PostgreSQL (with timeout)
         run: |
-          until pg_isready -h postgres -p 5432 -U postgres; do
-            echo "Waiting for postgres..."
+          echo "Checking if PostgreSQL is ready..."
+          for i in {1..15}; do
+            if pg_isready -h postgres -p 5432 -U postgres; then
+              echo "PostgreSQL is ready!"
+              exit 0
+            fi
+            echo "[$i/15] Waiting for PostgreSQL..."
             sleep 2
           done
+          echo "PostgreSQL did not become ready in time. Exiting."
+          exit 1
         env:
           PGPASSWORD: postgres
 
