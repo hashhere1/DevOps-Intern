@@ -2,7 +2,7 @@ name: FastAPI CI
 
 on:
   push:
-    branches: [main]
+    branches: [day3]
 
 jobs:
   build:
@@ -22,5 +22,5 @@ jobs:
 
     - name: Run FastAPI Check
       run: |
-        echo "FastAPI setup successful!"
+        pytest
 
