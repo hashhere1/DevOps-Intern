@@ -7,3 +7,4 @@ passlib~=1.7.4
 python-jose~=3.5.0
 pytest
 httpx
+python-multipart>=0.0.5
