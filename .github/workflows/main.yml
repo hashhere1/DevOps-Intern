@@ -9,7 +9,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     services:
       postgres:
         image: postgres:13
@@ -19,14 +18,9 @@ jobs:
           POSTGRES_DB: inventory_system
         ports:
           - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U hassaan -d inventory_system"
-          --health-interval=5s
-          --health-timeout=10s
-          --health-retries=20
 
     env:
-      DATABASE_URL: postgresql://hassaan:hassaan12@postgres:5432/inventory_system
+      DATABASE_URL: postgresql://hassaan:hassaan12@127.0.0.1:5432/inventory_system
 
     steps:
       - uses: actions/checkout@v4
