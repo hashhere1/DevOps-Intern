@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-import models
+from app import models
 from sqlalchemy.orm import Session
 
 def create(request, db: Session):

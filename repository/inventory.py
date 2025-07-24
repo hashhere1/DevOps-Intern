@@ -1,5 +1,5 @@
-from sqlalchemy.orm import Session
-import models
+from sqlalchemy.orm import Session,joinedload
+from app import models
 from fastapi import HTTPException, status
 
 
@@ -41,14 +41,26 @@ def update(inventory_id, request ,db: Session):
 
     return inventories
 
-def delete(inventory_id, db: Session):
-    inventories = db.query(models.Inventory).filter(models.Inventory.inventory_id == inventory_id).first()
+def delete(inventory_id: int, db: Session):
+    inventories = (
+        db.query(models.Inventory)
+        .options(
+            joinedload(models.Inventory.product)
+            .joinedload(models.Products.category),
+            joinedload(models.Inventory.product)
+            .joinedload(models.Products.supplier)
+        )
+        .filter(models.Inventory.inventory_id == inventory_id)
+        .first()
+    )
+
     if inventories is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"The inventory with id '{inventory_id}' not found"
         )
+
     db.delete(inventories)
     db.commit()
 
-    return f"The inventory with id '{inventory_id}' deleted"
+    return inventories
