@@ -25,3 +25,5 @@ jobs:
       - name: Run tests with SQLite
         run: |
           pytest -v
+        env:
+          DATABASE_URL: "sqlite:///:memory:"
