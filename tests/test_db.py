@@ -1,8 +1,9 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from app.models import Base
+import os
 
-DATABASE_URL = "sqlite:///:memory:"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///:memory:")
 engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 
 connection = engine.connect()

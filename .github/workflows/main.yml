@@ -1,10 +1,10 @@
-name: FastAPI Tests
+name: FastAPI SQLite CI
 
 on:
   push:
-    branches: [ main, day3 ]
+    branches: [ day4 ]
   pull_request:
-    branches: [ main, day3 ]
+    branches: [ day4 ]
 
 jobs:
   test:
@@ -23,7 +23,5 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run tests with SQLite
-        env:
-          ENV: test
         run: |
           pytest -v
