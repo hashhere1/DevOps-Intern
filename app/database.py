@@ -1,17 +1,13 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import os
 
-
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hassaan:hassaan12@postgres:5432/inventory_system")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hassaan:hassaan12@localhost:5432/inventory_system")
 
 engine = create_engine(
     DATABASE_URL,
-    pool_size=5,
-    max_overflow=10,
-    pool_timeout=30,
-    pool_recycle=1800
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 )
 
 SessionLocal = sessionmaker(
@@ -23,9 +19,13 @@ SessionLocal = sessionmaker(
 
 Base = declarative_base()
 
+
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+if os.getenv("ENV") != "testing":
+    Base.metadata.create_all(bind=engine)

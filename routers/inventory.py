@@ -1,8 +1,8 @@
 from fastapi import APIRouter,Depends
 from repository import inventory
 from auth.oauth2 import get_current_user
-import models
-from database import get_db
+from app import models
+from app.database import get_db
 from sqlalchemy.orm import Session
 from schemas import inventories
 from typing import List

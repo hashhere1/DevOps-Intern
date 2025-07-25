@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
-import models
-from sqlalchemy.orm import Session
+from app import models
+from sqlalchemy.orm import Session, joinedload
+
 
 def create(request, db: Session):
     check = db.query(models.Suppliers).filter(models.Suppliers.supplier_id == request.supplier_id).first()
@@ -24,6 +25,7 @@ def create(request, db: Session):
 
     return product
 
+
 def show_by_id(product_id, db: Session):
     product = db.query(models.Products).filter(models.Products.product_id == product_id).first()
     if product is None:
@@ -32,6 +34,7 @@ def show_by_id(product_id, db: Session):
             detail=f"The product with id '{product_id}' not found"
         )
     return product
+
 
 def update(product_id, request, db: Session):
     update_product = db.query(models.Products).filter(models.Products.product_id == product_id).first()
@@ -46,7 +49,6 @@ def update(product_id, request, db: Session):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Category with id '{request.category_id}' does not exist"
         )
-
 
     supplier_exists = db.query(models.Suppliers).filter(models.Suppliers.supplier_id == request.supplier_id).first()
     if supplier_exists is None:
@@ -65,14 +67,24 @@ def update(product_id, request, db: Session):
     db.refresh(update_product)
     return update_product
 
-def delete(product_id, db: Session):
-    delete_product = db.query(models.Products).filter(models.Products.product_id == product_id).first()
-    if delete_product is None:
+
+def delete(product_id: int, db: Session):
+    # First, delete any related inventory records (if needed)
+    inventory_item = db.query(models.Inventory).filter(models.Inventory.product_id == product_id).first()
+    if inventory_item:
+        db.delete(inventory_item)
+
+    # Use joinedload to eagerly load related category and supplier
+    product = db.query(models.Products) \
+        .options(joinedload(models.Products.category), joinedload(models.Products.supplier)).filter(
+        models.Products.product_id == product_id).first()
+
+    if product is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"The product with id '{product_id}' not found"
         )
-    db.delete(delete_product)
-    db.commit()
 
-    return f"The product with id '{product_id}' deleted"
+    db.delete(product)
+    db.commit()
+    return product

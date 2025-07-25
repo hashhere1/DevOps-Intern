@@ -35,4 +35,4 @@ class ProductResponse(BaseModel):
     supplier: SupplierResponse
 
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -1,26 +1,14 @@
-name: FastAPI CI
+name: FastAPI SQLite CI
 
 on:
   push:
-    branches: [ day3 ]
+    branches: [ day4 ]
   pull_request:
-    branches: [ day3 ]
+    branches: [ day4 ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: hassaan
-          POSTGRES_PASSWORD: hassaan12
-          POSTGRES_DB: inventory_system
-        ports:
-          - 5432:5432
-
-    env:
-      DATABASE_URL: postgresql://hassaan:hassaan12@127.0.0.1:5432/inventory_system
 
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +22,8 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run tests
+      - name: Run tests with SQLite
         run: |
           pytest -v
+        env:
+          DATABASE_URL: "sqlite:///:memory:"

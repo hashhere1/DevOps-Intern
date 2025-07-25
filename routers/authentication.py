@@ -5,8 +5,8 @@ from auth.hashing import verify
 from auth.auth_token import create_access_token
 from datetime import timedelta
 
-import models
-from database import get_db
+from app import models
+from app.database import get_db
 
 router = APIRouter(
     tags=["Login"],
