@@ -14,7 +14,7 @@ app.include_router(inventory.router)
 # app.add_middleware(LoggingMiddleware)
 app.include_router(authentication.router)
 app.include_router(sales.router)
-Base.metadata.create_all(bind=engine)
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app",host="0.0.0.0",port=8000,reload=True)
