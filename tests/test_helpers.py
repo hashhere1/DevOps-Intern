@@ -12,7 +12,7 @@ def setup_foreign_keys(db: Session):
     db.commit()
 
     product = Products(
-        name="TestProduct",
+        name="Test Product",
         description="Test Desc",
         category_id=category.category_id,
         supplier_id=supplier.supplier_id,
@@ -21,4 +21,6 @@ def setup_foreign_keys(db: Session):
         added_at=datetime.utcnow()
     )
     db.add(product)
+
     db.commit()
+

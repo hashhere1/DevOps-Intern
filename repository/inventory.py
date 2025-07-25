@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session,joinedload
+from sqlalchemy.orm import Session, joinedload
 from app import models
 from fastapi import HTTPException, status
 
@@ -17,6 +17,7 @@ def create(request, db: Session):
 
     return inventory_item
 
+
 def show_by_id(inventory_id, db: Session):
     inventories = db.query(models.Inventory).filter(models.Inventory.inventory_id == inventory_id).first()
     if inventories is None:
@@ -26,7 +27,8 @@ def show_by_id(inventory_id, db: Session):
         )
     return inventories
 
-def update(inventory_id, request ,db: Session):
+
+def update(inventory_id, request, db: Session):
     inventories = db.query(models.Inventory).filter(models.Inventory.inventory_id == inventory_id).first()
     if inventories is None:
         raise HTTPException(
@@ -40,6 +42,7 @@ def update(inventory_id, request ,db: Session):
     db.refresh(inventories)
 
     return inventories
+
 
 def delete(inventory_id: int, db: Session):
     inventories = (
