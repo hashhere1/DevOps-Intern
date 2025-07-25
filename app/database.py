@@ -1,10 +1,14 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-DATABASE_URL = "postgresql://hassaan:hassaan12@localhost:5432/inventory_system"
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://hassaan:hassaan12@localhost:5432/inventory_system")
 
-engine = create_engine(DATABASE_URL)
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
+)
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -23,4 +27,5 @@ def get_db():
     finally:
         db.close()
 
-Base.metadata.create_all(bind=engine)
+if os.getenv("ENV") != "testing":
+    Base.metadata.create_all(bind=engine)
