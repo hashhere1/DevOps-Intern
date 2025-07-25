@@ -7,6 +7,7 @@ from tests.test_helpers import setup_foreign_keys
 from auth.oauth2 import get_current_user
 from sqlalchemy.orm import Session
 from app.models import Products, Inventory, Suppliers, Categories
+import tests.test_db
 
 app.dependency_overrides[get_db] = override_get_db
 

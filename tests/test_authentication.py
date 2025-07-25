@@ -6,6 +6,7 @@ from app.models import Users
 from auth.hashing import hashing
 from app.database import get_db
 from tests.test_db import override_get_db, TestingSessionLocal
+import tests.test_db
 
 app.dependency_overrides[get_db] = override_get_db
 client = TestClient(app)

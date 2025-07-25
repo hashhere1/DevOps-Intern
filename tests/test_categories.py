@@ -6,6 +6,7 @@ from tests.test_db import override_get_db,TestingSessionLocal
 from auth.oauth2 import get_current_user
 from sqlalchemy.orm import Session
 from app.models import Categories
+import tests.test_db
 
 app.dependency_overrides[get_db] = override_get_db
 
