@@ -2,31 +2,32 @@ name: Run FastAPI Tests with SQLite
 
 on:
   push:
-    branches: [ day5 ]
+    branches:
+      - day5
   pull_request:
-    branches: [ day5 ]
+    branches:
+      - day5
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run Pytest
+      - name: Run tests with SQLite
+        env:
+          ENV: testing
         run: |
-          source venv/bin/activate
-          pytest -v
+          pytest --disable-warnings -q
