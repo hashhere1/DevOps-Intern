@@ -36,5 +36,51 @@
   -  Inventory routes
   - Category routes
 - Created a separate `test_db` using **SQLite (in-memory)** for isolated testing.
+---
+
+
+# Date - Monday, July 28, 2025
+
+---
+
+## Testing Setup for FastAPI Inventory Management System
+
+### Environment Setup
+- Switched testing database from **PostgreSQL** to **SQLite**.
+- Used environment variable `ENV=testing` to distinguish testing mode from production.
+
+### Database Configuration
+- Updated `database.py`:
+  - Configured dynamic `DATABASE_URL` based on environment variable.
+  - Added conditional `connect_args` for SQLite.
+  - Disabled auto-creation of tables (`Base.metadata.create_all`) unless not in testing mode.
+
+### Test Configuration
+- Created a reusable `db()` fixture using SQLite in `conftest.py`.
+- Used `TestingSessionLocal` to avoid interfering with main database.
+- Populated test database with:
+  - Categories
+  - Suppliers
+  - Users
+  - Products
+  - Sales
+- Cleaned up test database after test module finishes.
+
+### GitHub Actions CI
+- Configured `main.yml` to:
+  - Checkout code
+  - Set up Python 3.10
+  - Install dependencies via `requirements.txt`
+  - Set `ENV=testing` and run tests using `pytest`
+
+---
+
+## Outcome
+- Successfully isolated test environment using SQLite.
+- Ensured PostgreSQL production database is untouched during testing.
+- Set up automated tests on GitHub Actions using the testing database.
+---
+
+
 
 
