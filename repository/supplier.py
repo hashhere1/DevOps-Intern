@@ -44,4 +44,4 @@ def delete(supplier_id, db: Session):
         )
     db.delete(supplier)
     db.commit()
-    return f"Supplier with id '{supplier_id}' deleted"
+    return {"Message": f"The supplier with id '{supplier_id}' deleted"}

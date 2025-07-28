@@ -10,7 +10,7 @@ from auth.oauth2 import get_current_user
 router = APIRouter(
     tags=["Suppliers"],
     prefix="/suppliers",
-    dependencies=[Depends(get_current_user)]
+    # dependencies=[Depends(get_current_user)]
 )
 
 @router.post("/create", response_model=suppliers.SupplierResponse)
@@ -29,7 +29,7 @@ def show_by_id(supplier_id: int, db: Session = Depends(get_db)):
 def update(supplier_id: int, request: suppliers.UpdateSupplier, db: Session = Depends(get_db)):
     return supplier.update(supplier_id, request, db)
 
-@router.delete("/delete/{supplier_id}", response_model=suppliers.SupplierResponse)
+@router.delete("/delete/{supplier_id}")
 def delete(supplier_id: int, db: Session = Depends(get_db)):
     return supplier.delete(supplier_id, db)
 

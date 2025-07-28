@@ -10,7 +10,7 @@ from auth.oauth2 import get_current_user
 router = APIRouter(
     tags=["Sales"],
     prefix="/sales",
-    dependencies=[Depends(get_current_user)]
+    # dependencies=[Depends(get_current_user)]
 )
 
 
@@ -30,7 +30,7 @@ def show_by_id(sales_id: int, db: Session = Depends(get_db)):
 def update(sale_id: int, request: sales.UpdateSale, db: Session = Depends(get_db)):
     return sale.update(sale_id, request, db)
 
-@router.delete("/delete/{sale_id}",response_model=sales.SaleResponse)
+@router.delete("/delete/{sale_id}")
 def delete(sale_id: int, db: Session = Depends(get_db)):
     return sale.delete(sale_id, db)
 

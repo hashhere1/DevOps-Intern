@@ -1,41 +1,22 @@
 import pytest
 from fastapi.testclient import TestClient
 from app.main import app
-from app.database import get_db
-from tests.test_db import override_get_db, TestingSessionLocal
 from auth.oauth2 import get_current_user
-from sqlalchemy.orm import Session
-from app.models import Inventory, Products, Categories, Suppliers
-from tests.test_helpers import setup_foreign_keys
-import tests.test_db
-
-app.dependency_overrides[get_db] = override_get_db
-
-def override_get_current_user():
-    return {"username": "testuser", "user_id": 1}
-app.dependency_overrides[get_current_user] = override_get_current_user
+from app.models import Inventory
+from tests.test_helpers import db  # fixture
 
 client = TestClient(app)
 
 @pytest.fixture(autouse=True)
-def setup_inventory_dependencies():
-    db: Session = TestingSessionLocal()
-
+def setup_inventory(db):
     db.query(Inventory).delete()
-    db.query(Products).delete()
-    db.query(Categories).delete()
-    db.query(Suppliers).delete()
-
-    setup_foreign_keys(db)
-
-    db.close()
-
+    db.commit()
 
 def create_inventory():
     return client.post(
         "/inventory/create",
         json={
-            "product_id": 1,
+            "product_id": 1,  # If unsure, get actual ID in test
             "quantity": 50
         }
     )

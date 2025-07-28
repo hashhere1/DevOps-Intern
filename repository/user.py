@@ -44,4 +44,4 @@ def delete(user_id, db: Session):
         )
     db.delete(user)
     db.commit()
-    return f"User with id '{user_id}' deleted"
+    return {"Message": f"User with id '{user_id}' deleted"}
