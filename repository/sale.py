@@ -59,4 +59,4 @@ def delete(sale_id, db: Session):
     db.delete(delete_sale)
     db.commit()
 
-    return f"The Sale with id '{sale_id}' deleted"
+    return f"The sale with id '{sale_id}' deleted"

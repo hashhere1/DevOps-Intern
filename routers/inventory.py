@@ -11,7 +11,7 @@ from typing import List
 router = APIRouter(
     tags=["Inventory"],
     prefix="/inventory",
-    dependencies=[Depends(get_current_user)]
+    # dependencies=[Depends(get_current_user)]
 )
 
 

@@ -1,15 +1,8 @@
 import pytest
-from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
-from app.main import app
 from app.models import Users
 from auth.hashing import hashing
-from app.database import get_db
-from tests.test_db import override_get_db, TestingSessionLocal
-import tests.test_db
-
-app.dependency_overrides[get_db] = override_get_db
-client = TestClient(app)
+from tests.conftest import TestingSessionLocal
 
 
 @pytest.fixture(autouse=True)
@@ -29,7 +22,7 @@ def add_test_user(username: str, password: str):
     db.close()
 
 
-def test_login_success():
+def test_login_success(client):
     add_test_user("hassaan", "test123")
     response = client.post("/login/", data={
         "username": "hassaan",
@@ -41,7 +34,7 @@ def test_login_success():
     assert data["token_type"] == "Bearer"
 
 
-def test_login_invalid_password():
+def test_login_invalid_password(client):
     add_test_user("hassaan2", "realpass")
     response = client.post("/login/", data={
         "username": "hassaan2",
@@ -51,7 +44,7 @@ def test_login_invalid_password():
     assert response.json()["detail"] == "Invalid Credentials"
 
 
-def test_login_user_not_found():
+def test_login_user_not_found(client):
     response = client.post("/login/", data={
         "username": "nouser",
         "password": "any"

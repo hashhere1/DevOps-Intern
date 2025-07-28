@@ -10,7 +10,7 @@ from auth.oauth2 import get_current_user
 router = APIRouter(
     tags=["Categories"],
     prefix="/category",
-    dependencies=[Depends(get_current_user)]
+    # dependencies=[Depends(get_current_user)]
 )
 
 

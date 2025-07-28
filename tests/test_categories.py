@@ -1,72 +1,76 @@
 import pytest
-from fastapi.testclient import TestClient
-from app.main import app
-from app.database import get_db
-from tests.test_db import override_get_db,TestingSessionLocal
-from auth.oauth2 import get_current_user
 from sqlalchemy.orm import Session
 from app.models import Categories
-import tests.test_db
+from tests.conftest import client, TestingSessionLocal
 
-app.dependency_overrides[get_db] = override_get_db
-
-def override_get_current_user():
-    return {"username": "testuser", "user_id": 1}
-
-app.dependency_overrides[get_current_user] = override_get_current_user
-
-client = TestClient(app)
 
 @pytest.fixture(autouse=True)
-def clear_tables():
+def clear_categories():
+    """Clear the categories table before each test."""
     db: Session = TestingSessionLocal()
     db.query(Categories).delete()
     db.commit()
     db.close()
 
-def create_category():
+
+def create_category(client):
     return client.post(
         "/category/create",
-        json={"name": "Electronics",
-              "description": "All electronic items"
-              }
+        json={
+            "name": "Electronics",
+            "description": "All electronic items"
+        }
     )
 
-def test_create_category():
-    response = create_category()
-    assert response.status_code == 200
-    assert response.json()["name"] == "Electronics"
 
-def test_get_all_categories():
-    create_category()
-    response = client.get(
-        "/category/"
-    )
+def test_create_category(client):
+    response = create_category(client)
     assert response.status_code == 200
-    assert isinstance(response.json(),list)
-    assert response.json()[0]["name"] == "Electronics"
+    data = response.json()
+    assert data["name"] == "Electronics"
+    assert data["description"] == "All electronic items"
 
-def test_category_by_id():
-    create_category()
+
+def test_get_all_categories(client):
+    create_category(client)
+    response = client.get("/category/")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert data[0]["name"] == "Electronics"
+
+
+def test_category_by_id(client):
+    create_category(client)
     response = client.get("/category/by_id/1")
-
     assert response.status_code == 200
-    assert response.json()["name"] == "Electronics"
+    data = response.json()
+    assert data["name"] == "Electronics"
+    assert data["description"] == "All electronic items"
 
-def test_update_category():
-    create_category()
-    response = client.put("/category/update/1",
-                          json={"name": "UpdatedElectronics",
-                                "description": "Updated Electronic items"}
-                          )
+
+def test_update_category(client):
+    create_category(client)
+    response = client.put(
+        "/category/update/1",
+        json={
+            "name": "UpdatedElectronics",
+            "description": "Updated Electronic items"
+        }
+    )
     assert response.status_code == 200
-    assert response.json()["name"] == "UpdatedElectronics"
+    data = response.json()
+    assert data["name"] == "UpdatedElectronics"
 
-def test_delete_category():
-    create_category()
+
+def test_delete_category(client):
+    create_category(client)
     response = client.delete("/category/delete/1")
     assert response.status_code == 200
-    assert response.json()["name"] == "Electronics"
+    data = response.json()
+    assert data["name"] == "Electronics"
 
     response = client.get("/category/")
+    assert response.status_code == 200
     assert response.json() == []
